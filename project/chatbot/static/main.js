@@ -3,7 +3,6 @@ async function askWilliams(message = null) {
   const questionDisplay = document.getElementById("questionDisplay");
   const responseBox = document.getElementById("response");
 
-  // If no message is passed in, use the current input value
   if (message === null) {
     message = input.value;
   }
@@ -28,14 +27,44 @@ async function askWilliams(message = null) {
   }
 }
 
-// When the page loads
+function initFireMap() {
+  const map = L.map('map').setView([37.8, -96], 5); // Default center (USA)
+
+  // Load base map
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Load GeoJSON and plot all fires
+  fetch("/static/fires.geojson")
+    .then(res => res.json())
+    .then(geojson => {
+      const fireLayer = L.geoJSON(geojson, {
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            radius: 4,
+            fillColor: "red",
+            color: "darkred",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          });
+        },
+        onEachFeature: function (feature, layer) {
+          const conf = feature.properties.confidence || "N/A";
+          const date = feature.properties.acq_date || "unknown date";
+          layer.bindPopup(`🔥 Fire detected<br><b>Date:</b> ${date}<br><b>Confidence:</b> ${conf}`);
+        }
+      }).addTo(map);
+
+      // Fit map to show all fire points
+      map.fitBounds(fireLayer.getBounds());
+    });
+}
+
+
 window.onload = () => {
-  // Attach click handler to the button
   document.getElementById("askBtn").addEventListener("click", () => askWilliams());
-
-  // Trigger intro message
-  askWilliams("");
+  askWilliams(""); // intro
+  initFireMap();   // fire map
 };
-
-
-

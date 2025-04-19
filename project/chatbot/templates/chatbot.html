@@ -2,22 +2,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Williams - Wildfire Safety Chatbot</title>
+  <meta charset="UTF-8" />
+  <title>Williams - Wildfire Safety</title>
 
+  <!-- Styles -->
   <link rel="stylesheet" href="{% static 'chatbot.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Scripts -->
   <script src="{% static 'main.js' %}" defer></script>
 </head>
 <body>
-  <div class="container">
-    <h1>🪣 Williams</h1>
-    <p>Wildfire Safety Chatbot</p>
+  <!-- FIRE MAP at the top -->
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
 
-    <input type="text" id="userInput" placeholder="Ask something..." />
-    <button id="askBtn">Ask Williams</button>
-
-    <p id="questionDisplay"></p>
-    <div id="response"></div>
+  <!-- CHAT CONTAINER -->
+  <div id="chat-container">
+    <div class="chatbox">
+      <div id="questionDisplay"></div>
+      <div id="response"></div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Ask about wildfire safety..." />
+      <button id="askBtn">Ask Williams</button>
+    </div>
   </div>
 </body>
 </html>
