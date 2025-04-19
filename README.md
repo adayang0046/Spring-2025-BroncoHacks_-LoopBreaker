@@ -10,3 +10,7 @@ Williams is a real-time wildfire safety chatbot designed to help people stay inf
 - **OpenAI API** (AI Chat Backend)
 - **NASA FIRMS API** (Live Fire Data)
 - `pandas`, `folium` for data/map visualization
+
+
+YOUTUBE TEMO :3
+https://www.youtube.com/watch?v=ckXT8EOiVPg
