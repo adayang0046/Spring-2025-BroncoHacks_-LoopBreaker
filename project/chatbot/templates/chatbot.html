@@ -1,1 +1,23 @@
-meow
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Williams - Wildfire Chatbot</title>
+  <script>
+    async function askWilliams() {
+      const res = await fetch("/ask/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: "Is Pomona, CA a high risk wild fire place?" })
+      });
+
+      const data = await res.json();
+      document.getElementById("response").innerText = data.response || data.error;
+    }
+  </script>
+</head>
+<body>
+  <h1>Williams: Wildfire Safety Bot</h1>
+  <button onclick="askWilliams()">Test Gemini Response</button>
+  <p id="response" style="margin-top:20px;"></p>
+</body>
+</html>
