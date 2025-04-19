@@ -1,48 +1,23 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Williams - Wildfire Safety Chatbot</title>
-  <script>
-    async function askWilliams(message = null) {
-      // If no message provided, get it from the input box
-      if (message === null) {
-        message = document.getElementById("userInput").value;
-      }
 
-      // Display user's question
-      document.getElementById("questionDisplay").innerText = "You asked: " + message;
-      document.getElementById("response").innerText = "Williams is thinking...";
-
-      // Send the user's question to the backend
-      const res = await fetch("/ask/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Requested-With": "XMLHttpRequest"
-        },
-        body: JSON.stringify({ question: message })
-      });
-
-      const data = await res.json();
-
-      // Display Williams's answer
-      document.getElementById("response").innerText = data.response || data.error;
-    }
-
-    // Auto-trigger intro message on page load
-    window.onload = function() {
-      askWilliams("");  // Empty string triggers intro
-    };
-  </script>
+  <link rel="stylesheet" href="{% static 'chatbot.css' %}">
+  <script src="{% static 'main.js' %}" defer></script>
 </head>
 <body>
-  <h1>🔥 Williams: Wildfire Safety Chatbot</h1>
+  <div class="container">
+    <h1>🪣 Williams</h1>
+    <p>Wildfire Safety Chatbot</p>
 
-  <input type="text" id="userInput" placeholder="Type your wildfire safety question..." style="width: 350px;">
-  <button onclick="askWilliams()">Ask Williams</button>
+    <input type="text" id="userInput" placeholder="Ask something..." />
+    <button id="askBtn">Ask Williams</button>
 
-  <p id="questionDisplay" style="margin-top: 25px; font-style: italic;"></p>
-  <p id="response" style="margin-top: 15px; font-weight: bold;"></p>
+    <p id="questionDisplay"></p>
+    <div id="response"></div>
+  </div>
 </body>
 </html>
-

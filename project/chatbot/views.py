@@ -41,7 +41,7 @@ def ask_williams(request):
 
         try:
             response = model.generate_content(prompt)
-            return JsonResponse({"response": response.text})
+            return JsonResponse({"reply": response.text})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     else:
