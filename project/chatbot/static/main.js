@@ -1,3 +1,4 @@
+// 💬 Chatbot logic
 async function askWilliams(message = null) {
   const input = document.getElementById("userInput");
   const questionDisplay = document.getElementById("questionDisplay");
@@ -10,29 +11,28 @@ async function askWilliams(message = null) {
   questionDisplay.innerText = "You asked: " + message;
   responseBox.innerText = "Williams is thinking...";
 
-  // Get Location Data
-  let latitude, longitude;
+  // Try to get user's location
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(
       async function (position) {
-        latitude = position.coords.latitude;
-        longitude = position.coords.longitude;
-  
-        console.log("Latitude:", latitude);
-        console.log("Longitude:", longitude);
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        console.log("📍 User location:", latitude, longitude);
+
         try {
           const res = await fetch("/ask/", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               question: message,
               latitude: latitude,
               longitude: longitude,
             }),
           });
-      
+
           const data = await res.json();
           responseBox.innerText = data.reply || data.response || data.error || "⚠️ Unexpected response.";
         } catch (err) {
@@ -41,23 +41,27 @@ async function askWilliams(message = null) {
         }
       },
       function (error) {
-        console.error("Error getting location:", error.message);
+        console.error("❌ Error getting location:", error.message);
+        responseBox.innerText = "Could not get your location.";
       }
     );
   } else {
-    console.error("Geolocation is not supported by this browser.");
+    console.warn("Geolocation not supported.");
+    responseBox.innerText = "Geolocation not supported by this browser.";
   }
 }
 
+// 🗺️ Fire Map logic
 function initFireMap() {
-  const map = L.map('map').setView([37.8, -96], 5); // Default center (USA)
+  const defaultCenter = [37.8, -96]; // Center on US
+  const map = L.map('map').setView(defaultCenter, 5);
 
-  // Load base map
+  // Load base layer
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // Load GeoJSON and plot all fires
+  // Load and plot GeoJSON fire data
   fetch("/static/fires.geojson")
     .then(res => res.json())
     .then(geojson => {
@@ -79,14 +83,36 @@ function initFireMap() {
         }
       }).addTo(map);
 
-      // Fit map to show all fire points
       map.fitBounds(fireLayer.getBounds());
     });
+
+  // Zoom to user location and mark it
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        map.setView([lat, lon], 10);
+
+        L.circleMarker([lat, lon], {
+          radius: 6,
+          fillColor: "blue",
+          color: "navy",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.7
+        }).addTo(map).bindPopup("📍 You are here").openPopup();
+      },
+      (error) => {
+        console.error("❌ Error getting user location for map:", error.message);
+      }
+    );
+  }
 }
 
-
+// 🚀 Initialize everything on page load
 window.onload = () => {
   document.getElementById("askBtn").addEventListener("click", () => askWilliams());
-  askWilliams(""); // intro
-  initFireMap();   // fire map
+  askWilliams("");  // Auto-trigger intro
+  initFireMap();    // Load and display map
 };
