@@ -16,8 +16,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("chatbot.urls")),
+    path("api/", include("chatbot.urls")),  # API routes
+    path('', TemplateView.as_view(template_name='index.html')),  # React app
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    from django.views.static import serve
+    from django.urls import re_path
+
+    urlpatterns += [
+        re_path(r'^assets/(?P<path>.*)$', serve, {
+            'document_root': settings.BASE_DIR / 'frontend' / 'dist' / 'assets',
+        }),
+        re_path(r'^(?P<path>fires\.geojson|williams\.png|vite\.svg)$', serve, {
+            'document_root': settings.BASE_DIR / 'frontend' / 'dist',
+        }),
+    ]
