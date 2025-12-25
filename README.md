@@ -8,6 +8,7 @@ Williams is an AI-powered wildfire safety chatbot designed to help people stay i
 - 🎨 **Modern UI**: Clean, responsive React interface with Williams mascot branding
 - 🧳 **Safety Guidance**: Evacuation checklists, preparation steps, and emergency tips
 - 🔥 **Fire Data Visualization (disabled for now)**: Interactive map with NASA MODIS wildfire detection data (2023) 
+<img width="1806" height="731" alt="image" src="https://github.com/user-attachments/assets/4f92bd6f-7937-4589-aa34-9dc1e1b081cf" />
 
 ## 🛠️ Tech Stack
 
