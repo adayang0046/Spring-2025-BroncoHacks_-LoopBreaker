@@ -15,14 +15,66 @@ function FitBounds({ bounds }) {
   return null;
 }
 
+// Component to fix map size issues
+function MapResizer() {
+  const map = useMap();
+
+  useEffect(() => {
+    // AGGRESSIVE fix - call invalidateSize() many times at different intervals
+    const timer1 = setTimeout(() => map.invalidateSize(), 0);
+    const timer2 = setTimeout(() => map.invalidateSize(), 50);
+    const timer3 = setTimeout(() => map.invalidateSize(), 100);
+    const timer4 = setTimeout(() => map.invalidateSize(), 200);
+    const timer5 = setTimeout(() => map.invalidateSize(), 500);
+    const timer6 = setTimeout(() => map.invalidateSize(), 1000);
+
+    // Fix on window resize
+    const handleResize = () => map.invalidateSize();
+    window.addEventListener('resize', handleResize);
+
+    // Also force immediate resize
+    requestAnimationFrame(() => {
+      map.invalidateSize();
+    });
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      clearTimeout(timer4);
+      clearTimeout(timer5);
+      clearTimeout(timer6);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [map]);
+
+  return null;
+}
+
 function FireMap({ userLocation }) {
   const [fireData, setFireData] = useState(null);
   const [bounds, setBounds] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [mapReady, setMapReady] = useState(false);
   const defaultCenter = [37.8, -96]; // Center on US
 
   useEffect(() => {
-    // Load fire GeoJSON data
-    fetch('/fires.geojson')
+    // Wait for container to have dimensions before rendering map
+    const checkContainer = setInterval(() => {
+      const container = document.getElementById('map-container');
+      if (container && container.offsetWidth > 0) {
+        setMapReady(true);
+        clearInterval(checkContainer);
+      }
+    }, 50);
+
+    return () => clearInterval(checkContainer);
+  }, []);
+
+  useEffect(() => {
+    // Load LIVE fire data from NASA FIRMS API via Django backend
+    setLoading(true);
+    fetch('/api/fires/')
       .then(res => res.json())
       .then(geojson => {
         setFireData(geojson);
@@ -35,12 +87,48 @@ function FireMap({ userLocation }) {
           ]);
           setBounds(coords);
         }
+        setLoading(false);
       })
-      .catch(err => console.error('Error loading fire data:', err));
+      .catch(err => {
+        console.error('Error loading fire data:', err);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return (
+      <div id="map-container">
+        <div style={{ padding: '20px', textAlign: 'center', background: '#f4f4f4', borderRadius: '10px' }}>
+          Loading live fire data from NASA FIRMS...
+        </div>
+      </div>
+    );
+  }
+
+  if (!mapReady) {
+    return (
+      <div id="map-container">
+        <div style={{ padding: '20px', textAlign: 'center', background: '#f4f4f4', borderRadius: '10px' }}>
+          Initializing map...
+        </div>
+      </div>
+    );
+  }
+
+  const fireCount = fireData?.features?.length || 0;
 
   return (
     <div id="map-container">
+      {fireCount === 0 && (
+        <div style={{ padding: '10px', background: '#d4edda', color: '#155724', borderRadius: '8px', marginBottom: '10px', textAlign: 'center' }}>
+          ✅ No active wildfires detected in the USA (last {fireData?.metadata?.days || 10} days) - Stay safe!
+        </div>
+      )}
+      {fireCount > 0 && (
+        <div style={{ padding: '10px', background: '#fff3cd', color: '#856404', borderRadius: '8px', marginBottom: '10px', textAlign: 'center' }}>
+          🔥 {fireCount} active fire{fireCount > 1 ? 's' : ''} detected (last {fireData?.metadata?.days || 10} days) - Source: {fireData?.metadata?.source}
+        </div>
+      )}
       <MapContainer
         center={defaultCenter}
         zoom={5}
@@ -50,12 +138,16 @@ function FireMap({ userLocation }) {
           attribution='&copy; OpenStreetMap contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+        <MapResizer />
 
         {/* Render fire markers */}
         {fireData?.features?.map((feature, index) => {
           const [lon, lat] = feature.geometry.coordinates;
           const conf = feature.properties.confidence || 'N/A';
-          const date = feature.properties.acq_date || 'unknown date';
+          const date = feature.properties.acq_date || 'unknown';
+          const time = feature.properties.acq_time || 'unknown';
+          const satellite = feature.properties.satellite || 'VIIRS';
+          const frp = feature.properties.frp || 'N/A';
 
           return (
             <CircleMarker
@@ -71,9 +163,12 @@ function FireMap({ userLocation }) {
               }}
             >
               <Popup>
-                🔥 Fire detected<br />
+                🔥 <b>Active Fire Detected</b><br />
                 <b>Date:</b> {date}<br />
-                <b>Confidence:</b> {conf}
+                <b>Time:</b> {time} UTC<br />
+                <b>Confidence:</b> {conf}<br />
+                <b>Satellite:</b> {satellite}<br />
+                <b>Fire Power:</b> {frp} MW
               </Popup>
             </CircleMarker>
           );

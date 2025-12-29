@@ -12,23 +12,22 @@ body {
 }
 
 .App {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: 100vh;
+  padding: 20px;
 }
 
 /* Header with Williams Branding */
 .app-header {
   width: 100%;
-  max-width: 1200px;
   display: flex;
   align-items: center;
   gap: 20px;
   padding: 20px;
   background: linear-gradient(135deg, #66A5AD 0%, #558B91 100%);
   border-radius: 12px;
-  margin: 20px 20px 0 20px;
+  margin-bottom: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -58,33 +57,40 @@ body {
 /* Map Container */
 #map-container {
   width: 100%;
-  max-width: 1200px;
-  padding: 20px 20px 0 20px;
-  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Map wrapper to prevent shifting */
+#map-container > div {
+  margin-bottom: 10px;
 }
 
 /* Chat Container */
 #chat-container {
   width: 100%;
-  max-width: 1200px;
   padding: 20px;
-  margin-top: 20px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  height: 400px; /* FIXED height - prevents layout shift */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Chatbox */
 .chatbox {
   padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Question Display */
 #questionDisplay {
-  margin-top: 20px;
   font-style: italic;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
 }
 
 /* Response Container with Avatar */
@@ -93,6 +99,8 @@ body {
   gap: 15px;
   align-items: flex-start;
   margin-top: 10px;
+  height: 200px; /* FIXED height */
+  flex-shrink: 0;
 }
 
 .williams-avatar {
@@ -112,10 +120,32 @@ body {
   padding: 15px;
   background: #f4f4f4;
   border-radius: 8px;
-  max-height: 200px;
+  height: 100%; /* Fill container */
   overflow-y: auto;
   white-space: pre-line;
   line-height: 1.6;
+}
+
+/* Loading animation for "Williams is thinking..." */
+#response.loading {
+  color: #666;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-dots {
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 /* Chat Input */
@@ -157,8 +187,12 @@ button:hover {
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
+  .App {
+    padding: 10px;
+  }
+
   .app-header {
-    margin: 10px;
+    margin-bottom: 10px;
     padding: 15px;
   }
 
@@ -176,12 +210,15 @@ button:hover {
   }
 
   #map-container {
-    padding: 10px;
+    margin-bottom: 10px;
   }
 
   #chat-container {
-    margin-top: 10px;
-    margin: 10px;
+    height: 350px; /* Fixed height on mobile */
+  }
+
+  .response-container {
+    height: 170px; /* Fixed smaller height on mobile */
   }
 
   .williams-avatar {

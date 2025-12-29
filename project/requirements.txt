@@ -5,3 +5,4 @@ geopandas==1.0.1
 shapely==2.0.6
 google-generativeai
 python-dotenv==1.0.1
+requests==2.31.0

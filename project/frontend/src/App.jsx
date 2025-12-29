@@ -59,8 +59,7 @@ function App() {
           <p>Your Wildfire Safety Assistant</p>
         </div>
       </header>
-      {/* Temporarily disabled - 37MB file freezes browser */}
-      {/* <FireMap userLocation={userLocation} /> */}
+      <FireMap userLocation={userLocation} />
       <div id="chat-container">
         <ChatBox
           question={question}

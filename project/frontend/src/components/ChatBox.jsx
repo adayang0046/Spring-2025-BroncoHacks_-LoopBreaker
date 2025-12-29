@@ -8,8 +8,12 @@ function ChatBox({ question, response, loading }) {
       )}
       <div className="response-container">
         <img src="/williams.png" alt="Williams" className="williams-avatar" />
-        <div id="response">
-          {loading ? 'Williams is thinking...' : response}
+        <div id="response" className={loading ? 'loading' : ''}>
+          {loading ? (
+            <span className="loading-dots">Williams is thinking...</span>
+          ) : (
+            response
+          )}
         </div>
       </div>
     </div>
