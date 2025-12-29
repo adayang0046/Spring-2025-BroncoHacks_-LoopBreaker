@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: williams-wildfire-assistant
+    runtime: python
+    buildCommand: "cd project && chmod +x build.sh && ./build.sh"
+    startCommand: "cd project && gunicorn website.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: MAP_KEY
+        sync: false
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_SETTINGS_MODULE
+        value: website.settings
