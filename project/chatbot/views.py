@@ -115,10 +115,23 @@ def chat_bot(request):
 @csrf_exempt
 def ask_williams(request):
     if request.method == 'POST':
+        # Emergency kill switch - set DISABLE_AI=true in Render to stop API calls
+        if os.getenv('DISABLE_AI', 'false').lower() == 'true':
+            return JsonResponse({
+                "reply": "Williams is temporarily unavailable for maintenance. Please check back later!"
+            })
+
         data = json.loads(request.body)
         user_question = data.get("question", "").strip()
         latitude = data.get("latitude", "")
         longitude = data.get("longitude", "")
+
+        # Check cache for intro message (save money on every page load!)
+        if not user_question:  # Auto-intro message
+            cache_key = "williams_intro_message"
+            cached_intro = cache.get(cache_key)
+            if cached_intro:
+                return JsonResponse({"reply": cached_intro})
 
         # Fetch live fire data from NASA FIRMS
         fire_data = fetch_fire_data()
@@ -226,7 +239,13 @@ def ask_williams(request):
 
         try:
             response = model.generate_content(prompt)
-            return JsonResponse({"reply": response.text})
+            reply_text = response.text
+
+            # Cache intro message to save API calls (1 hour)
+            if not user_question:
+                cache.set("williams_intro_message", reply_text, 3600)
+
+            return JsonResponse({"reply": reply_text})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     else:
