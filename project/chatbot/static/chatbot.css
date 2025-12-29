@@ -1,9 +1,9 @@
-/* ✅ Normalize Box Sizing */
+/* Box Sizing */
 * {
   box-sizing: border-box;
 }
 
-/* 🌍 Global Layout */
+/* Global Layout */
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #fdf6f0;
@@ -14,7 +14,7 @@ body {
   align-items: center;
 }
 
-/* 🗺️ Fire Map */
+/* Fire Map */
 #map-container {
   width: 100%;
   max-width: 1200px;
@@ -28,7 +28,7 @@ body {
   border: 2px solid #ccc;
 }
 
-/* 💬 Chatbox Container */
+/* Chatbox Container */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -46,7 +46,7 @@ h1 {
   color: #66A5AD;
 }
 
-/* 🧠 Chat Input + Button */
+/* Chat Input + Button */
 .chat-input-row {
   display: flex;
   gap: 10px;
@@ -75,7 +75,7 @@ button:hover {
   background-color: #558B91;
 }
 
-/* ✉️ Chat Display */
+/* Chat Display */
 #questionDisplay {
   margin-top: 20px;
   font-style: italic;
@@ -92,7 +92,7 @@ button:hover {
   white-space: pre-line;
 }
 
-/* 📱 Responsive */
+/* Responsive */
 @media screen and (max-width: 768px) {
   #map {
     height: 300px;

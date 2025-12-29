@@ -72,7 +72,6 @@ body {
   background: white;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  height: 400px; /* FIXED height - prevents layout shift */
   display: flex;
   flex-direction: column;
 }
@@ -99,8 +98,6 @@ body {
   gap: 15px;
   align-items: flex-start;
   margin-top: 10px;
-  height: 200px; /* FIXED height */
-  flex-shrink: 0;
 }
 
 .williams-avatar {
@@ -120,10 +117,28 @@ body {
   padding: 15px;
   background: #f4f4f4;
   border-radius: 8px;
-  height: 100%; /* Fill container */
+  max-height: 400px;
   overflow-y: auto;
-  white-space: pre-line;
   line-height: 1.6;
+}
+
+/* Markdown styling within response */
+#response ul, #response ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+#response li {
+  margin: 0.25em 0;
+}
+
+#response p {
+  margin: 0.5em 0;
+}
+
+#response strong {
+  font-weight: bold;
+  color: #333;
 }
 
 /* Loading animation for "Williams is thinking..." */
@@ -211,14 +226,6 @@ button:hover {
 
   #map-container {
     margin-bottom: 10px;
-  }
-
-  #chat-container {
-    height: 350px; /* Fixed height on mobile */
-  }
-
-  .response-container {
-    height: 170px; /* Fixed smaller height on mobile */
   }
 
   .williams-avatar {

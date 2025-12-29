@@ -1,3 +1,5 @@
+import ReactMarkdown from 'react-markdown';
+
 function ChatBox({ question, response, loading }) {
   return (
     <div className="chatbox">
@@ -12,7 +14,7 @@ function ChatBox({ question, response, loading }) {
           {loading ? (
             <span className="loading-dots">Williams is thinking...</span>
           ) : (
-            response
+            <ReactMarkdown>{response}</ReactMarkdown>
           )}
         </div>
       </div>
