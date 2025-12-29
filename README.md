@@ -1,6 +1,7 @@
 # 🔥 Williams: Your Wildfire Safety Chat Assistant
 
 Williams is an AI-powered wildfire safety chatbot designed to help people stay informed and prepared for wildfires. Built as a full-stack React application with Django REST API backend, it provides instant, location-aware answers to fire safety questions.
+Deployed: https://williams-wildfire-assistant.onrender.com
 
 ## 💡 What It Does
 
