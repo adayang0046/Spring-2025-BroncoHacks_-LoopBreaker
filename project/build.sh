@@ -13,6 +13,3 @@ cd ..
 
 # Run Django migrations
 python manage.py migrate
-
-# Collect static files for production
-python manage.py collectstatic --no-input
