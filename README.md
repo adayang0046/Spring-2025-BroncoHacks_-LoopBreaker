@@ -98,10 +98,9 @@ Open http://localhost:8000 in your browser
 - Multi-language support (Spanish, etc.)
 - Historical fire data analysis and trends
 
-## 🎬 Demo
+## Screenshsot
+<img width="446" height="587" alt="Williams chatbot" src="https://github.com/user-attachments/assets/75c0ee79-b886-4f42-bd79-bbb8fda8eb2a" />
 
-**Youtube Demo:**
-https://www.youtube.com/watch?v=ckXT8EOiVPg
 
 ## 📝 API Endpoints
 
