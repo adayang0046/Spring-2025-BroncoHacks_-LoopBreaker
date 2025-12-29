@@ -38,7 +38,7 @@ Williams is an AI-powered wildfire safety chatbot designed to help people stay i
 - Python 3.8+
 - Node.js 16+
 - Google Gemini API key ([Get one free here](https://aistudio.google.com/app/apikey))
-- NASA FIRMS MAP_KEY ([Request free access here](https://firms.modaps.eosdis.nasa.gov/api/map_key/))
+- NASA FIRMS MAP_KEY ([Request free access here](https://firms.modaps.eosdis.nasa.gov/api/map_key))
 
 ### Setup
 

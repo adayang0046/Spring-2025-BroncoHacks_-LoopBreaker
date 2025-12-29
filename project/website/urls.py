@@ -35,7 +35,7 @@ if settings.DEBUG:
         re_path(r'^assets/(?P<path>.*)$', serve, {
             'document_root': settings.BASE_DIR / 'frontend' / 'dist' / 'assets',
         }),
-        re_path(r'^(?P<path>fires\.geojson|williams\.png|vite\.svg)$', serve, {
+        re_path(r'^(?P<path>fires\.geojson|williams\.png|vite\.svg|favicon\.png)$', serve, {
             'document_root': settings.BASE_DIR / 'frontend' / 'dist',
         }),
     ]
