@@ -100,7 +100,9 @@ Open http://localhost:8000 in your browser
 - Historical fire data analysis and trends
 
 ## Screenshsot
-<img width="446" height="587" alt="Williams chatbot" src="https://github.com/user-attachments/assets/75c0ee79-b886-4f42-bd79-bbb8fda8eb2a" />
+<img width="1213" height="890" alt="williams new" src="https://github.com/user-attachments/assets/0ed4c2dc-33cd-4634-b743-658795657ec7" />
+
+
 
 
 ## 📝 API Endpoints
