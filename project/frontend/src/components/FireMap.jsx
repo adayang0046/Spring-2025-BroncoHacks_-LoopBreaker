@@ -143,23 +143,45 @@ function FireMap({ userLocation }) {
         {/* Render fire markers */}
         {fireData?.features?.map((feature, index) => {
           const [lon, lat] = feature.geometry.coordinates;
-          const conf = feature.properties.confidence || 'N/A';
+          const confCode = feature.properties.confidence || 'N/A';
           const date = feature.properties.acq_date || 'unknown';
           const time = feature.properties.acq_time || 'unknown';
           const satellite = feature.properties.satellite || 'VIIRS';
           const frp = feature.properties.frp || 'N/A';
 
+          // Convert confidence code to readable text
+          const confidenceMap = {
+            'l': 'Low (0-30%)',
+            'n': 'Nominal (30-80%)',
+            'h': 'High (80-100%)'
+          };
+          const conf = confidenceMap[confCode] || confCode;
+
           return (
             <CircleMarker
               key={index}
               center={[lat, lon]}
-              radius={4}
+              radius={8}
               pathOptions={{
                 fillColor: 'red',
                 color: 'darkred',
-                weight: 1,
+                weight: 2,
                 opacity: 1,
-                fillOpacity: 0.8
+                fillOpacity: 0.7
+              }}
+              eventHandlers={{
+                mouseover: (e) => {
+                  e.target.setStyle({
+                    fillOpacity: 1,
+                    radius: 10
+                  });
+                },
+                mouseout: (e) => {
+                  e.target.setStyle({
+                    fillOpacity: 0.7,
+                    radius: 8
+                  });
+                }
               }}
             >
               <Popup>
