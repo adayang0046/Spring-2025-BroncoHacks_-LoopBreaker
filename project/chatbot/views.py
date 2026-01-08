@@ -63,7 +63,8 @@ def fetch_fire_data():
             return None
 
         days = 10
-        url = f"https://firms.modaps.eosdis.nasa.gov/api/country/csv/{map_key}/VIIRS_SNPP_NRT/USA/{days}"
+        # USA bounding box: west=-125, south=24, east=-66, north=49
+        url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-125,24,-66,49/{days}"
 
         response = requests.get(url, timeout=10)
         response.raise_for_status()
@@ -127,7 +128,8 @@ def ask_williams(request):
         longitude = data.get("longitude", "")
 
         # Check cache for intro message (save money on every page load!)
-        if not user_question:  # Auto-intro message
+        # Only cache if we have location data, otherwise intro won't be location-aware
+        if not user_question and latitude and longitude:  # Auto-intro message with location
             cache_key = "williams_intro_message"
             cached_intro = cache.get(cache_key)
             if cached_intro:
@@ -242,7 +244,8 @@ def ask_williams(request):
             reply_text = response.text
 
             # Cache intro message to save API calls (1 hour)
-            if not user_question:
+            # Only cache if we have location data
+            if not user_question and latitude and longitude:
                 cache.set("williams_intro_message", reply_text, 3600)
 
             return JsonResponse({"reply": reply_text})
@@ -294,8 +297,10 @@ def get_fires(request):
 
         # NASA FIRMS API - Get last 10 days of fires in USA
         # Using VIIRS_SNPP_NRT (near real-time satellite data)
+        # Note: /country/ endpoint is deprecated, using /area/ endpoint instead
         days = 10  # Last 10 days (winter might have fewer fires)
-        url = f"https://firms.modaps.eosdis.nasa.gov/api/country/csv/{map_key}/VIIRS_SNPP_NRT/USA/{days}"
+        # USA bounding box: west=-125, south=24, east=-66, north=49
+        url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-125,24,-66,49/{days}"
 
         # Fetch data from NASA
         response = requests.get(url, timeout=10)

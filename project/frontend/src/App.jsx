@@ -11,15 +11,15 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
 
-  const handleAsk = async (msg) => {
+  const handleAsk = async (msg, lat, lon) => {
     setLoading(true);
     setQuestion(msg);
     try {
-      const data = await askWilliams(
-        msg,
-        userLocation?.lat || '',
-        userLocation?.lon || ''
-      );
+      // Use provided lat/lon if available, otherwise use state
+      const latitude = lat !== undefined ? lat : (userLocation?.lat || '');
+      const longitude = lon !== undefined ? lon : (userLocation?.lon || '');
+
+      const data = await askWilliams(msg, latitude, longitude);
       setResponse(data.reply || data.error || 'Unexpected response.');
     } catch (error) {
       console.error('Error:', error);
@@ -34,19 +34,24 @@ function App() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude
-          });
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          setUserLocation({ lat, lon });
+
+          // Trigger intro message with location data directly (not from state!)
+          handleAsk('', lat, lon);
         },
         (error) => {
           console.error('Error getting location:', error);
+          // Still show intro even if location is denied
+          handleAsk('', '', '');
         }
       );
+    } else {
+      // No geolocation support - show intro without location
+      handleAsk('', '', '');
     }
-
-    // Auto-trigger intro message ONCE on mount
-    handleAsk('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);  // Empty dependency array - run only once on mount
 

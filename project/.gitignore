@@ -6,6 +6,7 @@ db.sqlite3
 *.log
 .idea/
 .DS_Store
+staticfiles/
 
 # React frontend
 frontend/node_modules/
