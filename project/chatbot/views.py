@@ -62,7 +62,7 @@ def fetch_fire_data():
         if not map_key:
             return None
 
-        days = 10
+        days = 5  # NASA FIRMS /area/ endpoint maximum is 5 days
         # USA bounding box: west=-125, south=24, east=-66, north=49
         url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-125,24,-66,49/{days}"
 
@@ -190,7 +190,7 @@ def ask_williams(request):
 
                     fire_context += "⚠️ USE THIS REAL DATA to provide specific, location-aware safety advice!\n"
                 else:
-                    fire_context = f"\n\n✅ GOOD NEWS: No active fires detected within 100 miles of user's location (last 10 days).\n"
+                    fire_context = f"\n\n✅ GOOD NEWS: No active fires detected within 100 miles of user's location (last 5 days).\n"
                     fire_context += f"Total fires in USA: {len(fire_data.get('features', []))} (NASA FIRMS data)\n\n"
 
             except (ValueError, TypeError) as e:
@@ -198,7 +198,7 @@ def ask_williams(request):
 
         elif fire_data:
             total_fires = len(fire_data.get('features', []))
-            fire_context = f"\n\n🔥 Current wildfire status: {total_fires} active fires detected across USA (NASA FIRMS, last 10 days)\n"
+            fire_context = f"\n\n🔥 Current wildfire status: {total_fires} active fires detected across USA (NASA FIRMS, last 5 days)\n"
             fire_context += "(User location unavailable - unable to provide proximity warnings)\n\n"
         else:
             fire_context = "\n\n(Real-time fire data temporarily unavailable)\n\n"
@@ -295,10 +295,10 @@ def get_fires(request):
         if not map_key:
             return JsonResponse({"error": "MAP_KEY not configured"}, status=500)
 
-        # NASA FIRMS API - Get last 10 days of fires in USA
+        # NASA FIRMS API - Get last 5 days of fires in USA
         # Using VIIRS_SNPP_NRT (near real-time satellite data)
         # Note: /country/ endpoint is deprecated, using /area/ endpoint instead
-        days = 10  # Last 10 days (winter might have fewer fires)
+        days = 5  # NASA FIRMS /area/ endpoint maximum is 5 days
         # USA bounding box: west=-125, south=24, east=-66, north=49
         url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-125,24,-66,49/{days}"
 

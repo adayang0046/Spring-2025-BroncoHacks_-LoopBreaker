@@ -121,12 +121,12 @@ function FireMap({ userLocation }) {
     <div id="map-container">
       {fireCount === 0 && (
         <div style={{ padding: '10px', background: '#d4edda', color: '#155724', borderRadius: '8px', marginBottom: '10px', textAlign: 'center' }}>
-          ✅ No active wildfires detected in the USA (last {fireData?.metadata?.days || 10} days) - Stay safe!
+          ✅ No active wildfires detected in the USA (last {fireData?.metadata?.days || 5} days) - Stay safe!
         </div>
       )}
       {fireCount > 0 && (
         <div style={{ padding: '10px', background: '#fff3cd', color: '#856404', borderRadius: '8px', marginBottom: '10px', textAlign: 'center' }}>
-          🔥 {fireCount} active fire{fireCount > 1 ? 's' : ''} detected (last {fireData?.metadata?.days || 10} days) - Source: {fireData?.metadata?.source}
+          🔥 {fireCount} active fire{fireCount > 1 ? 's' : ''} detected (last {fireData?.metadata?.days || 5} days) - Source: {fireData?.metadata?.source}
         </div>
       )}
       <MapContainer
