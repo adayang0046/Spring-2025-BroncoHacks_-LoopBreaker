@@ -100,7 +100,8 @@ Open http://localhost:8000 in your browser
 - Historical fire data analysis and trends
 
 ## Screenshsot
-<img width="1213" height="890" alt="williams new" src="https://github.com/user-attachments/assets/0ed4c2dc-33cd-4634-b743-658795657ec7" />
+<img width="889" height="630" alt="Williams wildfire" src="https://github.com/user-attachments/assets/d175ebf6-804d-4100-b83f-6ae28365d38c" />
+
 
 
 
@@ -127,7 +128,7 @@ Ask Williams a wildfire safety question with location-aware, fire-proximity anal
 ```
 
 ### GET `/api/fires/`
-Get live wildfire data from NASA FIRMS (last 10 days, USA).
+Get live wildfire data from NASA FIRMS (last 5 days, USA).
 
 **Response:**
 ```json
