@@ -15,6 +15,9 @@ from math import radians, cos, sin, asin, sqrt
 
 from pathlib import Path
 
+# ChatMessage model for saving chat history
+from .models import ChatMessage
+
 # Load API key from .env
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
@@ -112,7 +115,7 @@ def fetch_fire_data():
 def chat_bot(request):
     return render(request, 'chatbot.html')
 
-# Render Landing Webpage - NOW FIRE-AWARE! 🔥
+# Render Landing Webpage - FIRE-AWARE
 @csrf_exempt
 def ask_williams(request):
     if request.method == 'POST':
@@ -127,7 +130,7 @@ def ask_williams(request):
         latitude = data.get("latitude", "")
         longitude = data.get("longitude", "")
 
-        # Check cache for intro message (save money on every page load!)
+        # Check cache for intro message (save money on every page load)
         # Only cache if we have location data, otherwise intro won't be location-aware
         if not user_question and latitude and longitude:  # Auto-intro message with location
             cache_key = "williams_intro_message"
@@ -243,6 +246,15 @@ def ask_williams(request):
             response = model.generate_content(prompt)
             reply_text = response.text
 
+            # SAVE TO DATABASE - SQL INSERT statement
+            ChatMessage.objects.create(
+                question=user_question,
+                response=reply_text,
+                latitude=float(latitude) if latitude else None,
+                longitude=float(longitude) if longitude else None
+            )
+            # Behind the scenes, Django runs: INSERT INTO chatbot_chatmessage (question, response, latitude, longitude, timestamp) VALUES (?, ?, ?, ?, ?)
+
             # Cache intro message to save API calls (1 hour)
             # Only cache if we have location data
             if not user_question and latitude and longitude:
@@ -349,4 +361,39 @@ def get_fires(request):
         return JsonResponse({"error": f"Failed to fetch fire data: {str(e)}"}, status=500)
     except Exception as e:
         return JsonResponse({"error": f"Error processing fire data: {str(e)}"}, status=500)
+
+
+# View Chat History from Database
+@csrf_exempt
+def get_chat_history(request):
+    """
+    Retrieve recent chat messages from the database
+    SQL SELECT queries
+    """
+    try:
+        # Get the 'limit' parameter from query string (default: 20)
+        limit = int(request.GET.get('limit', 20))
+
+        # SQL QUERY: SELECT * FROM chatbot_chatmessage ORDER BY timestamp DESC LIMIT ?
+        recent_chats = ChatMessage.objects.all()[:limit]
+
+        # Convert to JSON format
+        chat_data = []
+        for chat in recent_chats:
+            chat_data.append({
+                "id": chat.id,
+                "question": chat.question,
+                "response": chat.response,
+                "latitude": chat.latitude,
+                "longitude": chat.longitude,
+                "timestamp": chat.timestamp.isoformat()
+            })
+
+        return JsonResponse({
+            "count": len(chat_data),
+            "chats": chat_data
+        }, safe=False)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 

@@ -92,6 +92,14 @@ Open http://localhost:8000 in your browser
 - **RESTful API design** - Clean `/api/ask/` and `/api/fires/` endpoints
 - **Caching Strategy** - 1-hour cache for NASA API to avoid rate limits
 
+### Database Features
+  - **Chat History Persistence**: SQL database storing all user-Williams conversations
+  - Tracks questions, AI responses, user locations (latitude/longitude), and timestamps
+  - Implements Django ORM models with automatic PRIMARY KEY and indexing
+  - RESTful API endpoint (`/api/history/`) for retrieving conversation logs
+  - SQL operations: INSERT (save chats), SELECT (retrieve history), ORDER BY (newest first)
+  - Supports pagination with LIMIT parameter for performance optimization
+
 ### Planned Features 🚧
 - Marker clustering for dense fire areas
 - User authentication and chat history persistence
