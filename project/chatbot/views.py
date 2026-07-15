@@ -67,7 +67,8 @@ def fetch_fire_data():
 
         days = 5  # NASA FIRMS /area/ endpoint maximum is 5 days
         # USA bounding box: west=-125, south=24, east=-66, north=49
-        url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-125,24,-66,49/{days}"
+        # Using VIIRS_NOAA20_NRT - VIIRS_SNPP_NRT's NRT feed has gone stale on NASA's side
+        url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_NOAA20_NRT/-125,24,-66,49/{days}"
 
         response = requests.get(url, timeout=10)
         response.raise_for_status()
@@ -308,11 +309,12 @@ def get_fires(request):
             return JsonResponse({"error": "MAP_KEY not configured"}, status=500)
 
         # NASA FIRMS API - Get last 5 days of fires in USA
-        # Using VIIRS_SNPP_NRT (near real-time satellite data)
+        # Using VIIRS_NOAA20_NRT (near real-time satellite data)
+        # VIIRS_SNPP_NRT's NRT feed has gone stale on NASA's side; NOAA-20 is current
         # Note: /country/ endpoint is deprecated, using /area/ endpoint instead
         days = 5  # NASA FIRMS /area/ endpoint maximum is 5 days
         # USA bounding box: west=-125, south=24, east=-66, north=49
-        url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_SNPP_NRT/-125,24,-66,49/{days}"
+        url = f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/{map_key}/VIIRS_NOAA20_NRT/-125,24,-66,49/{days}"
 
         # Fetch data from NASA
         response = requests.get(url, timeout=10)

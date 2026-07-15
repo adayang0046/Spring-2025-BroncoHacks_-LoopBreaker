@@ -56,6 +56,7 @@ function FireMap({ userLocation }) {
   const [bounds, setBounds] = useState(null);
   const [loading, setLoading] = useState(true);
   const [mapReady, setMapReady] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
   const defaultCenter = [37.8, -96]; // Center on US
 
   useEffect(() => {
@@ -74,9 +75,14 @@ function FireMap({ userLocation }) {
   useEffect(() => {
     // Load LIVE fire data from NASA FIRMS API via Django backend
     setLoading(true);
+    setFetchError(null);
     fetch('/api/fires/')
-      .then(res => res.json())
-      .then(geojson => {
+      .then(res => res.json().then(geojson => ({ ok: res.ok, geojson })))
+      .then(({ ok, geojson }) => {
+        if (!ok || geojson.error) {
+          throw new Error(geojson.error || 'Failed to fetch fire data');
+        }
+
         setFireData(geojson);
 
         // Calculate bounds from GeoJSON features
@@ -91,6 +97,7 @@ function FireMap({ userLocation }) {
       })
       .catch(err => {
         console.error('Error loading fire data:', err);
+        setFetchError(err.message);
         setLoading(false);
       });
   }, []);
@@ -119,7 +126,12 @@ function FireMap({ userLocation }) {
 
   return (
     <div id="map-container">
-      {fireCount === 0 && (
+      {fetchError && (
+        <div style={{ padding: '10px', background: '#f8d7da', color: '#721c24', borderRadius: '8px', marginBottom: '10px', textAlign: 'center' }}>
+          ⚠️ Unable to load live fire data: {fetchError}
+        </div>
+      )}
+      {!fetchError && fireCount === 0 && (
         <div style={{ padding: '10px', background: '#d4edda', color: '#155724', borderRadius: '8px', marginBottom: '10px', textAlign: 'center' }}>
           ✅ No active wildfires detected in the USA (last {fireData?.metadata?.days || 5} days) - Stay safe!
         </div>
